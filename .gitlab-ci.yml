@@ -1,0 +1,32 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  APP_DIR: "/home/admin/app"
+
+before_script:
+  - echo "$ec2_ssh_key" > deploy_key && chmod 600 deploy_key
+
+build: 
+  stage: build
+  image: node:16
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+  only:
+    - production
+
+deploy:
+  stage: deploy
+  script:
+    - scp -i deploy_key -r dist/* $ec2_user@$ec2_ip_preprod:$APP_DIR
+    - ssh -i deploy_key $ec2_user@$ec2_ip_preprod <<EOF
+        cd $APP_DIR
+        pm2 restart all || pm2 start "npm start" --name "morningnews"
+      EOF
+  only:
+    - production
