@@ -65,6 +65,7 @@ test_cypress:
   before_script:
   - echo "Installation des dépendances"
   - npm install
+  - npm install cypress --save-dev
   - npm start &
   script:
     - echo "Lancement des tests Cypress"
