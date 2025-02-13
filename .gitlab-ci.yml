@@ -64,7 +64,6 @@ test_cypress:
   - echo "Installation des dépendances"
   - npm install
   - npm start &
-  - npx wait-on http://localhost:3000
   script:
     - echo "Lancement des tests Cypress"
     - npx cypress run --spec "cypress/e2e/testfront.cy.js"
@@ -91,6 +90,7 @@ test_jest:
   image: node:16
   script:
     - npm install --save-dev jest
+    - npm install redux-mock-store --save-dev
     - npm test -- --ci
   only:
     - devloppeur
