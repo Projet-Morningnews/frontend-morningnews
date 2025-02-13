@@ -69,7 +69,7 @@ test_cypress:
   - npm start &
   script:
     - echo "Lancement des tests Cypress"
-    - npx cypress run --headless --config-file cypress.json --browser electron --spec "cypress/e2e/testfront.cy.js"
+    - npx cypress run --headless --browser electron --spec "cypress/e2e/testfront.cy.js"
   only:
     - devloppeur
 
