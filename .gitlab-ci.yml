@@ -59,7 +59,9 @@ deploy_prod:
 
 test_cypress:
   stage: test
-  image: cypress/included:latest
+  image: 
+    name: cypress/included:latest
+    entrypoint: [""]
   before_script:
   - echo "Installation des dépendances"
   - npm install
@@ -87,7 +89,9 @@ test_sonarcloud:
 
 test_jest:
   stage: test
-  image: node:16
+  image: 
+    name: node:16
+    entrypoint: [""]
   script:
     - npm install --save-dev jest
     - npm install redux-mock-store --save-dev
