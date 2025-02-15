@@ -85,7 +85,8 @@ test_sonarcloud:
       - .sonar/cache
   script:
     - echo "Sonar Scanner en cours"
-    - sonar-scanner
+    - sonar-scanner -Dsonar.branch.name=$CI_COMMIT_BRANCH
+
   only:
     - devloppeur
 
