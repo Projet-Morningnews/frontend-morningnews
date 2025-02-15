@@ -60,7 +60,7 @@ deploy_prod:
 test_cypress:
   stage: test
   image: 
-    name: cypress/browser:latest
+    name: cypress/browsers:latest
     entrypoint: [""]
   before_script:
   - echo "Installation des dépendances"
