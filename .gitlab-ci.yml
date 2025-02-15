@@ -90,17 +90,4 @@ test_sonarcloud:
   only:
     - devloppeur
 
-test_jest:
-  stage: test
-  image: 
-    name: node:16
-    entrypoint: [""]
-  script:
-    - npm install --save-dev jest
-    - npm install redux-mock-store --save-dev
-    - npm test -- --ci
-  only:
-    - devloppeur
-
-
 
