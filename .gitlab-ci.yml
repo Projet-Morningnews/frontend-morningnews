@@ -88,7 +88,7 @@ test_sonarcloud:
   only:
     - devloppeur
 
-# test_jest:
+test_jest:
   stage: test
   image: 
     name: node:16
