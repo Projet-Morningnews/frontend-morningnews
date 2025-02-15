@@ -86,7 +86,8 @@ test_sonarcloud:
   script:
     - echo "Sonar Scanner en cours"
     - sonar-scanner -Dsonar.branch.name=$CI_COMMIT_BRANCH
-
+  rules:
+    - if '$CI_COMMIT_BRANCH == devloppeur'
   only:
     - devloppeur
 
