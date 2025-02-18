@@ -15,47 +15,51 @@ build_preprod:
   stage: build
   image: node:16
   script:
+    - echo "Installation des dependances et build de l'application de preprod"
     - npm install
     - npm run build
   artifacts:
     paths:
       - dist/
-  only:
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
 
 deploy_preprod:
   stage: deploy
   script:
+    - echo "Deploiement de l'application sur l'instance de preprod"
     - scp -i deploy_key -r dist/* $ec2_user@$ec2_ip_preprod:$APP_DIR
     - ssh -i deploy_key $ec2_user@$ec2_ip_preprod <<EOF
         cd $APP_DIR
         pm2 restart all || pm2 start "npm start" --name "morningnews"
       EOF
-  only:
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
 
 build_prod: 
   stage: build
   image: node:16
   script:
+    - echo "Installation des dependances et build de l'application de production"
     - npm install
     - npm run build
   artifacts:
     paths:
       - dist/
-  only:
-    - production
+  rules:
+    - if: $CI_COMMIT_BRANCH == "production"
 
 deploy_prod:
   stage: deploy
   script:
+    - echo "Deploiement de l'application sur l'instance de producction"
     - scp -i deploy_key -r dist/* $ec2_user@$ec2_ip:$APP_DIR
     - ssh -i deploy_key $ec2_user@$ec2_ip <<EOF
         cd $APP_DIR
         pm2 restart all || pm2 start "npm start" --name "morningnews"
       EOF
-  only:
-    - production
+  rules:
+    - if: $CI_COMMIT_BRANCH == "production"
 
 test_cypress:
   stage: test
@@ -71,8 +75,8 @@ test_cypress:
   script:
     - echo "Lancement des tests Cypress"
     - npx cypress run --headless --config-file cypress.config.js --browser electron --spec "cypress/e2e/testfront.cy.js"
-  only:
-    - devloppeur
+  rules:
+    - if: $CI_COMMIT_BRANCH == "devloppeur"
 
 test_sonarcloud:
   stage: test
@@ -86,7 +90,7 @@ test_sonarcloud:
   script:
     - echo "Sonar Scanner en cours"
     - sonar-scanner -Dsonar.branch.name=$CI_COMMIT_BRANCH
-  only:
-    - devloppeur
+  rules:
+    - if: $CI_COMMIT_BRANCH == "devloppeur"
 
 
