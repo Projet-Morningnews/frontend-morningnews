@@ -44,7 +44,7 @@ deploy_preprod:
   stage: deploy
   script:
     - echo "Deploiement de l'application sur l'instance de preprod"
-    - "sed -i 's|image: phuulia/morningnews-frontend-lacapsule.*|image: ${DOCKER_IMAGE_PREPROD}:${PREPRODTAG}|' docker-compose.yml"
+    - sed -i '' "s|image: phuulia/morningnews-frontend-lacapsule:[^ ]*|image: ${DOCKER_IMAGE_PREPROD}:${PREPRODTAG}|" docker-compose.yml
     - rsync -avz -e "ssh -i deploy_key" docker-compose.yml .env $ec2_user@$ec2_ip_preprod:$APP_DIR
     - ssh -i deploy_key $ec2_user@$ec2_ip_preprod <<EOF
         cd $APP_DIR
