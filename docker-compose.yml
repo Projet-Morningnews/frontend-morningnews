@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: contextPath
+      dockerfile: Dockerfile
+    image: phuulia/morningnews-frontend-lacapsule:preprod-$CI_COMMIT_SHORT_SHA
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend-network
+  
+  reverse-proxy:
+    image: nginx:latest
+    container_name: nginx_morningnews_proxy
+    ports:
+      - "443:443"
+      - "80:80"
+    networks:
+      - frontend-network
+
+networks:
+  backend-network:
+    driver: bridge
