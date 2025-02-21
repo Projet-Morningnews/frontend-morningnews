@@ -37,7 +37,7 @@ build_preprod:
     - docker push $DOCKER_IMAGE_PREPROD:$PREPRODTAG
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-  tag:
+  tags:
     - runner
 
 deploy_preprod:
@@ -54,7 +54,7 @@ deploy_preprod:
       EOF
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-  tag:
+  tags:
     - runner
 
 
@@ -71,7 +71,7 @@ deploy_prod:
       EOF
   rules:
     - if: $CI_COMMIT_BRANCH == "production"
-  tag:
+  tags:
     - runner
 
 test_cypress:
