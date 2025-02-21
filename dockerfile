@@ -9,8 +9,6 @@ EXPOSE 3000
 # Dependances
 RUN npm install
 
-RUN npm install mongodb
-
 # copies des fichiers sources
 COPY . .
 
