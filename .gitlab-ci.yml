@@ -28,8 +28,6 @@ build_prod:
     - docker push $DOCKER_IMAGE_PROD:latest
   rules:
     - if: $CI_COMMIT_BRANCH == "production"
-  tag:
-    - runner
 
 build_preprod: 
   stage: build
