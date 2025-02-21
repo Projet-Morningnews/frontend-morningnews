@@ -7,59 +7,74 @@ variables:
   APP_DIR: "/home/admin/app"
   SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
   GIT_DEPTH: "0"
+  DOCKER_IMAGE_PROD: phuulia/morningnews-frontend-lacapsule
+  DOCKER_IMAGE_PREPROD: phuulia/morningnews-frontend-lacapsule
+  TAG: $CI_COMMIT_SHORT_SHA
+  PREPRODTAG: preprod-$CI_COMMIT_SHORT_SHA
+
 
 before_script:
   - echo "$ec2_ssh_key" > deploy_key && chmod 600 deploy_key
+  - apt-get update && apt-get install -y docker.io
+  - echo $tokendocker | docker login -u $logindocker --password-stdin
+
+
+build_prod: 
+  stage: build
+  script:
+    - echo "$env" > .env
+    - docker build -t $DOCKER_IMAGE_PROD:$TAG -t $DOCKER_IMAGE_PROD:latest .
+    - docker push $DOCKER_IMAGE_PROD:$TAG
+    - docker push $DOCKER_IMAGE_PROD:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "production"
+  tag:
+    - runner
 
 build_preprod: 
   stage: build
-  image: node:16
   script:
-    - echo "Installation des dependances et build de l'application de preprod"
-    - npm install
-    - npm run build
-  artifacts:
-    paths:
-      - dist/
+    - echo "$env" > .env
+    - docker build -t $DOCKER_IMAGE_PREPROD:$PREPRODTAG .
+    - docker push $DOCKER_IMAGE_PREPROD:$PREPRODTAG
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+  tag:
+    - runner
 
 deploy_preprod:
   stage: deploy
   script:
     - echo "Deploiement de l'application sur l'instance de preprod"
-    - scp -i deploy_key -r dist/* $ec2_user@$ec2_ip_preprod:$APP_DIR
-    - ssh -i deploy_key $ec2_user@$ec2_ip_preprod <<EOF
+    - sed -i "s|image: .*|image: ${DOCKER_IMAGE_PREPROD:${PREPRODTAG}}|" docker-compose.yml
+    - rsync -avz -e "ssh -i deploy_key" docker-compose.yml .env $ec2_user@$ec2_ip_preprod:$APP_DIR
+    - ssh -i deploy_key $ec2_user@$ec2_ip <<EOF
         cd $APP_DIR
-        pm2 restart all || pm2 start "npm start" --name "morningnews"
+        docker-compose pull
+        docker-compose down
+        docker-compose up -d --pull always
       EOF
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+  tag:
+    - runner
 
-build_prod: 
-  stage: build
-  image: node:16
-  script:
-    - echo "Installation des dependances et build de l'application de production"
-    - npm install
-    - npm run build
-  artifacts:
-    paths:
-      - dist/
-  rules:
-    - if: $CI_COMMIT_BRANCH == "production"
 
 deploy_prod:
   stage: deploy
   script:
-    - echo "Deploiement de l'application sur l'instance de producction"
-    - scp -i deploy_key -r dist/* $ec2_user@$ec2_ip:$APP_DIR
+    - echo "Deploiement de l'application sur l'instance de production"
+    - sed -i "s|image: .*|image: ${DOCKER_IMAGE_PROD:latest}|" docker-compose.yml
+    - rsync -avz -e "ssh -i deploy_key" docker-compose.yml .env $ec2_user@$ec2_ip:$APP_DIR
     - ssh -i deploy_key $ec2_user@$ec2_ip <<EOF
         cd $APP_DIR
-        pm2 restart all || pm2 start "npm start" --name "morningnews"
+        docker-compose down
+        docker-compose up -d --pull always
       EOF
   rules:
     - if: $CI_COMMIT_BRANCH == "production"
+  tag:
+    - runner
 
 test_cypress:
   stage: test
