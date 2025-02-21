@@ -46,7 +46,7 @@ deploy_preprod:
     - echo "Deploiements de l'application sur l'instance de preprod"
     - echo "PREPRODTAG=${PREPRODTAG}"
     - yq eval '.services.app.image = "${DOCKER_IMAGE_PREPROD}:${PREPRODTAG}"' -i docker-compose.yml
-    - rsync -avz -v --progress -e "ssh -vvv -i deploy_key" docker-compose.yml admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com:$APP_DIR
+    - rsync -avz -v --progress -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -vvv -i deploy_key" docker-compose.yml admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com:$APP_DIR
     - ssh -v -i deploy_key $ec2_user@$ec2_ip_preprod <<EOF
         cd $APP_DIR
         docker-compose pull
