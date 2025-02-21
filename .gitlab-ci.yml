@@ -46,9 +46,8 @@ deploy_preprod:
     - echo "Deploiements de l'application sur l'instance de preprod"
     - echo "PREPRODTAG=${PREPRODTAG}"
     - yq eval '.services.app.image = "${DOCKER_IMAGE_PREPROD}:${PREPRODTAG}"' -i docker-compose.yml
-    - ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -v -i deploy_key.pem $ec2_user@$ec2_ip_preprod
-    - rsync -avz -e "ssh -i deploy_key" docker-compose.yml .env $ec2_user@$ec2_ip_preprod:$APP_DIR
-    - ssh -i deploy_key $ec2_user@$ec2_ip_preprod <<EOF
+    - rsync -avz -e "ssh -i deploy_key.pem" docker-compose.yml .env $ec2_user@$ec2_ip_preprod:$APP_DIR
+    - ssh -i deploy_key.pem $ec2_user@$ec2_ip_preprod <<EOF
         cd $APP_DIR
         docker-compose pull
         docker-compose down
