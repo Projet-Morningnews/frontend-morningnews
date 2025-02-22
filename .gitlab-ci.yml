@@ -17,7 +17,6 @@ before_script:
   - echo -e "$ec2_ssh_key" > deploy_key && chmod 600 deploy_key
   - apt-get update && apt-get install -y docker.io
   - echo $tokendocker | docker login -u $logindocker --password-stdin
-  - export PATH=$PATH:/usr/local/bin
   - docker --version
 
 
@@ -40,7 +39,7 @@ build_preprod:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   tags:
-    - shell
+    - linux
 
 deploy_preprod:
   stage: deploy
@@ -49,14 +48,15 @@ deploy_preprod:
     - rsync -avv --progress -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i deploy_key" docker-compose.yml admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com:$APP_DIR
     - docker --version
     - ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i deploy_key admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com <<EOF
-        cd $APP_DIR && \
-        /usr/local/bin/docker compose down && \
-        /usr/local/bin/docker compose up -d --pull always
+        export PATH=\$PATH:/usr/local/bin && \
+        cd \$APP_DIR && \
+        docker compose down && \
+        docker compose up -d --pull always
       EOF
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   tags:
-    - shell
+    - linux
 
 
 deploy_prod:
