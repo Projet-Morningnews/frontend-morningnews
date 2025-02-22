@@ -16,9 +16,6 @@ variables:
 before_script:
   - echo -e "$ec2_ssh_key" > deploy_key && chmod 600 deploy_key
   - apt-get update && apt-get install -y docker.io
-  - sudo apt-get update && sudo apt-get install -y jq
-  - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
-  - chmod +x /usr/local/bin/yq
   - echo $tokendocker | docker login -u $logindocker --password-stdin
 
 
@@ -50,7 +47,7 @@ deploy_preprod:
     - rsync -avv --progress -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -vvv -i deploy_key" docker-compose.yml admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com:$APP_DIR
     - ssh -i deploy_key admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com <<EOF
         cd $APP_DIR && \
-        yq eval -i '.services.app.image = strenv(DOCKER_IMAGE_PREPROD) + ":" + strenv(PREPRODTAG)' docker-compose.yml && \
+        sed -i "s|^\(\s*image:\s*\).*|\1${DOCKER_IMAGE_PREPROD}:${PREPRODTAG}|" docker-compose.yml && \
         docker-compose pull && \
         docker-compose down && \
         docker-compose up -d --pull always
