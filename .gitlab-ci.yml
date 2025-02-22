@@ -44,7 +44,7 @@ build_preprod:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   tags:
-    - linux
+    - runner
 
 deploy_preprod:
   stage: deploy
@@ -59,7 +59,7 @@ deploy_preprod:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   tags:
-    - linux
+    - runner
 
 
 deploy_prod:
