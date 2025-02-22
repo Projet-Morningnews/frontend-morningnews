@@ -17,6 +17,7 @@ before_script:
   - echo -e "$ec2_ssh_key" > deploy_key && chmod 600 deploy_key
   - apt-get update && apt-get install -y docker.io
   - echo $tokendocker | docker login -u $logindocker --password-stdin
+  - echo $PATH
 
 
 build_prod: 
