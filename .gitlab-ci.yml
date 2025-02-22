@@ -47,8 +47,8 @@ deploy_preprod:
     - rsync -avv --progress -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -vvv -i deploy_key" docker-compose.yml admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com:$APP_DIR
     - ssh -i deploy_key admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com <<EOF
         cd $APP_DIR && \
-        /usr/bin/sudo /usr/bin/docker compose down && \
-        /usr/bin/sudo /usr/bin/docker compose up -d --pull always
+        /usr/bin/docker compose down && \
+        /usr/bin/docker compose up -d --pull always
       EOF
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
