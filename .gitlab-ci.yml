@@ -3,10 +3,6 @@ stages:
   - deploy
   - test
 
-image: docker:latest
-services:
-  - docker:dind
-
 variables:
   APP_DIR: "/home/admin/app"
   SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
