@@ -9,8 +9,8 @@ variables:
   GIT_DEPTH: "0"
   DOCKER_IMAGE_PROD: phuulia/morningnews-frontend-lacapsule
   DOCKER_IMAGE_PREPROD: phuulia/morningnews-frontend-lacapsule
-  TAG: $CI_COMMIT_SHORT_SHA
-  PREPRODTAG: preprod-$CI_COMMIT_SHORT_SHA
+  TAG: $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
+  PREPRODTAG: $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
 
 
 before_script:
@@ -47,8 +47,6 @@ deploy_preprod:
     - rsync -avv --progress -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -vvv -i deploy_key" docker-compose.yml admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com:$APP_DIR
     - ssh -i deploy_key admin@ec2-13-38-84-26.eu-west-3.compute.amazonaws.com <<EOF
         cd $APP_DIR && \
-        sed -i "s|^\(\s*image:\s*\).*|\1${DOCKER_IMAGE_PREPROD}:${PREPRODTAG}|" docker-compose.yml && \
-        docker-compose pull && \
         docker-compose down && \
         docker-compose up -d --pull always
       EOF
@@ -62,7 +60,6 @@ deploy_prod:
   stage: deploy
   script:
     - echo "Deploiement de l'application sur l'instance de production"
-    - " sed -i 's|image: .*|image: ${DOCKER_IMAGE_PROD:latest}|' docker-compose.yml "
     - rsync -avz -e "ssh -i deploy_key" docker-compose.yml .env $ec2_user@$ec2_ip:$APP_DIR
     - ssh -i deploy_key $ec2_user@$ec2_ip <<EOF
         cd $APP_DIR

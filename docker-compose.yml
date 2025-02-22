@@ -5,7 +5,7 @@ services:
     build:
       context: contextPath
       dockerfile: Dockerfile
-    image: phuulia/morningnews-frontend-lacapsule:preprod-$CI_COMMIT_SHORT_SHA
+    image: phuulia/morningnews-frontend-lacapsule:$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
     env_file:
       - .env
     ports:
