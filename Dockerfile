@@ -19,7 +19,7 @@ WORKDIR /usr/share/nginx/html
 
 RUN rm -f ./usr/share/nginx/html/*
 
-COPY --from=builder /app/build /usr/share/nginx/html/
+COPY --from=builder /app/ /usr/share/nginx/html/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
