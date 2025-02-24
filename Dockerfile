@@ -1,6 +1,6 @@
 FROM node:16 AS builder
 
-WORKDIR /app
+WORKDIR /
 
 COPY ./package*.json ./
 
@@ -14,10 +14,9 @@ FROM nginx:latest
 
 WORKDIR /usr/share/nginx/html
 
-RUN rm -rf /usr/share/nginx/html/*
+RUN rm -f ./*
 
-COPY --from=builder /app/.next /usr/share/nginx/html/.next
-COPY --from=builder /app/public /usr/share/nginx/html/public
+COPY --from=builder / /usr/share/nginx/html/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
