@@ -7,10 +7,11 @@ COPY ./package*.json ./
 # Dependances
 RUN npm install
 
-RUN npm run build
 
 # copies des fichiers sources
 COPY . .
+
+RUN npm run build
 
 FROM nginx:latest
 
