@@ -1,7 +1,11 @@
 services:
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: phuulia/morningnews-frontend-lacapsule:$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
     container_name: frontend_morningnews
+    restart: always
     environment:
       - CI_COMMIT_BRANCH=${CI_COMMIT_BRANCH}
       - CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA}
@@ -10,7 +14,12 @@ services:
 
   reverse-proxy:
     image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./app:/usr/share/nginx/html
     container_name: nginx_morningnews_proxy
+    depends_on:
+      - app
     ports:
       - "443:443"
       - "80:80"
