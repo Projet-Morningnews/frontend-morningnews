@@ -1,8 +1,5 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: phuulia/morningnews-frontend-lacapsule:$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
     container_name: frontend_morningnews
     restart: always
