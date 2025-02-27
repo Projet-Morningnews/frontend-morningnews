@@ -13,7 +13,7 @@ function Home() {
   const [topArticle, setTopArticle] = useState({});
 
   useEffect(() => {
-    fetch('http://16.171.146.176:3000/articles')
+    fetch('http://13.38.74.176:3000/articles')
       .then(response => response.json())
       .then(data => {
         setTopArticle(data.articles[0]);
