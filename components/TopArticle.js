@@ -13,7 +13,7 @@ function TopArticle(props) {
       return;
     }
 
-    fetch(`http://13.38.74.176:80/users/canBookmark/${user.token}`)
+    fetch(`http://${process.env.NEXT_PUBLIC_BACKURL}/users/canBookmark/${user.token}`)
       .then(response => response.json())
       .then(data => {
         if (data.result && data.canBookmark) {

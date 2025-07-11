@@ -13,7 +13,7 @@ function Home() {
   const [topArticle, setTopArticle] = useState({});
 
   useEffect(() => {
-    fetch('http://13.38.74.176:80/articles')
+    fetch('http://${process.env.NEXT_PUBLIC_BACKURL}/articles')
       .then(response => response.json())
       .then(data => {
         setTopArticle(data.articles[0]);
